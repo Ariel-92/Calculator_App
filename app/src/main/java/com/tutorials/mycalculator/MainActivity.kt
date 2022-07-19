@@ -60,17 +60,55 @@ class MainActivity : AppCompatActivity() {
                     prefix = "-"
                     tvValue = tvValue.substring(1)
                 }
-                val splitValue = tvValue.split("-")
+                if(tvValue.contains("-")) {
+                    val splitValue = tvValue.split("-")
 
-                var one = prefix + splitValue[0]
-                var two = splitValue[1]
-                var result = one.toDouble() - two.toDouble()
+                    var one = prefix + splitValue[0]
+                    var two = splitValue[1]
+                    var result = one.toDouble() - two.toDouble()
 
-                tvInput?.text = result.toString()
+                    tvInput?.text = removeZeroAfterDot(result.toString())
+                }
+                else if(tvValue.contains("+")) {
+                    val splitValue = tvValue.split("+")
+
+                    var one = prefix + splitValue[0]
+                    var two = splitValue[1]
+                    var result = one.toDouble() + two.toDouble()
+
+                    tvInput?.text = removeZeroAfterDot(result.toString())
+                }
+                else if(tvValue.contains("*")) {
+                    val splitValue = tvValue.split("*")
+
+                    var one = prefix + splitValue[0]
+                    var two = splitValue[1]
+                    var result = one.toDouble() * two.toDouble()
+
+                    tvInput?.text = removeZeroAfterDot(result.toString())
+                }
+                else if(tvValue.contains("/")) {
+                    val splitValue = tvValue.split("/")
+
+                    var one = prefix + splitValue[0]
+                    var two = splitValue[1]
+                    var result = one.toDouble() / two.toDouble()
+
+                    tvInput?.text = removeZeroAfterDot(result.toString())
+                }
             }catch (e: ArithmeticException){
                 e.printStackTrace()
             }
         }
+    }
+
+    private fun removeZeroAfterDot(result: String) : String{
+        var value = result
+        if(result.contains(".0")){
+            value = result.substring(0, result.length - 2)
+        }
+
+        return value
     }
 
     private fun isOperatorAdded(value: String) : Boolean{
