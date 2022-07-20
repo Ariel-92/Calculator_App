@@ -60,42 +60,14 @@ class MainActivity : AppCompatActivity() {
                     prefix = "-"
                     tvValue = tvValue.substring(1)
                 }
-                if(tvValue.contains("-")) {
-                    val splitValue = tvValue.split("-")
-
-                    var one = prefix + splitValue[0]
-                    var two = splitValue[1]
-                    var result = one.toDouble() - two.toDouble()
-
-                    tvInput?.text = removeZeroAfterDot(result.toString())
-                }
-                else if(tvValue.contains("+")) {
-                    val splitValue = tvValue.split("+")
-
-                    var one = prefix + splitValue[0]
-                    var two = splitValue[1]
-                    var result = one.toDouble() + two.toDouble()
-
-                    tvInput?.text = removeZeroAfterDot(result.toString())
-                }
-                else if(tvValue.contains("*")) {
-                    val splitValue = tvValue.split("*")
-
-                    var one = prefix + splitValue[0]
-                    var two = splitValue[1]
-                    var result = one.toDouble() * two.toDouble()
-
-                    tvInput?.text = removeZeroAfterDot(result.toString())
-                }
-                else if(tvValue.contains("/")) {
-                    val splitValue = tvValue.split("/")
-
-                    var one = prefix + splitValue[0]
-                    var two = splitValue[1]
-                    var result = one.toDouble() / two.toDouble()
-
-                    tvInput?.text = removeZeroAfterDot(result.toString())
-                }
+                if(tvValue.contains("-"))
+                    tvInput?.text = subtract(value = tvValue, prefix = prefix)
+                else if(tvValue.contains("+"))
+                    tvInput?.text = plus(value = tvValue, prefix = prefix)
+                else if(tvValue.contains("*"))
+                    tvInput?.text = multiply(value = tvValue, prefix = prefix)
+                else if(tvValue.contains("/"))
+                    tvInput?.text = divide(value = tvValue, prefix = prefix)
             }catch (e: ArithmeticException){
                 e.printStackTrace()
             }
@@ -120,5 +92,45 @@ class MainActivity : AppCompatActivity() {
                     || value.contains("+")
                     || value.contains("-")
         }
+    }
+
+    private fun plus(value: String, prefix: String) : String{
+        val splitValue = value.split("+")
+
+        var one = prefix + splitValue[0]
+        var two = splitValue[1]
+        var result = one.toDouble() + two.toDouble()
+
+        return removeZeroAfterDot(result.toString())
+    }
+
+    private fun subtract(value: String, prefix: String) : String{
+        val splitValue = value.split("-")
+
+        var one = prefix + splitValue[0]
+        var two = splitValue[1]
+        var result = one.toDouble() - two.toDouble()
+
+        return removeZeroAfterDot(result.toString())
+    }
+
+    private fun multiply(value: String, prefix: String) : String{
+        val splitValue = value.split("*")
+
+        var one = prefix + splitValue[0]
+        var two = splitValue[1]
+        var result = one.toDouble() * two.toDouble()
+
+        return removeZeroAfterDot(result.toString())
+    }
+
+    private fun divide(value: String, prefix: String) : String{
+        val splitValue = value.split("/")
+
+        var one = prefix + splitValue[0]
+        var two = splitValue[1]
+        var result = one.toDouble() / two.toDouble()
+
+        return removeZeroAfterDot(result.toString())
     }
 }
