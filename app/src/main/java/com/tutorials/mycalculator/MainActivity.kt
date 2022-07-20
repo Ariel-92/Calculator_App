@@ -1,5 +1,6 @@
 package com.tutorials.mycalculator
 
+import android.graphics.Path
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -8,32 +9,66 @@ import android.widget.TextView
 import android.widget.Toast
 import java.lang.ArithmeticException
 
+enum class Operator {
+    DEFAULT, PLUS, MINUS, MULTIPLY, DIVISION
+}
+
 class MainActivity : AppCompatActivity() {
 
     private var tvInput: TextView? = null
     var lastNumeric : Boolean = false
     var lastDot : Boolean = false
+    var currentOperator : Operator = Operator.DEFAULT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         tvInput = findViewById(R.id.tvInput)
+        tvInput?.text = "0"
     }
 
     fun onDigit(view: View){
-        tvInput?.append((view as Button).text)
-        lastNumeric = true
+        val input : String = (view as Button).text.toString()
+        if(lastNumeric || lastDot) {
+            tvInput?.append(input)
+            lastNumeric = true
+        }
+        else {
+            var tvValues : List<String> = subtractBetweenOperator(tvInput?.text.toString())
+            if(tvValues.size <= 1) {
+                if (currentOperator != Operator.DEFAULT && tvInput?.text.toString() != "0") {
+                    tvInput?.append(input)
+                    lastNumeric = true
+                } else if (input != "0") {
+                    tvInput?.text = input
+                    lastNumeric = true
+                }
+            }
+            if(tvValues.size == 2) {
+                if (tvValues[1] == "0"){
+                    if (input != "0") {
+                        var tempText : String = tvInput?.text.toString()
+                        tvInput?.text = tempText.substring(0, tempText.length - 1) + input
+                        lastNumeric = true
+                    }
+                } else{
+                    tvInput?.append(input)
+                    if (input != "0")
+                        lastNumeric = true
+                }
+            }
+        }
     }
 
     fun onClear(view: View){
-        tvInput?.text = ""
+        tvInput?.text = "0"
         lastNumeric = false
         lastDot = false
     }
 
     fun onDecimalPoint(view: View){
-        if(lastNumeric && !lastDot){
+        if((lastNumeric || tvInput?.text.toString().last() == '0') && !lastDot){
             tvInput?.append(".")
             lastNumeric = false
             lastDot = true
@@ -46,6 +81,7 @@ class MainActivity : AppCompatActivity() {
                 tvInput?.append((view as Button).text)
                 lastNumeric = false
                 lastDot = false
+                changeOperator((view as Button).text.toString())
             }
         }
     }
@@ -132,5 +168,26 @@ class MainActivity : AppCompatActivity() {
         var result = one.toDouble() / two.toDouble()
 
         return removeZeroAfterDot(result.toString())
+    }
+
+    private fun changeOperator(value: String){
+        when(value) {
+            "+" -> currentOperator = Operator.PLUS
+            "-" -> currentOperator = Operator.MINUS
+            "*" -> currentOperator = Operator.MULTIPLY
+            "/" -> currentOperator = Operator.DIVISION
+        }
+    }
+
+    private fun subtractBetweenOperator(value: String) : List<String>{
+        var result : List<String> = when(currentOperator) {
+            Operator.PLUS -> value.split("+")
+            Operator.MINUS -> value.split("-")
+            Operator.MULTIPLY -> value.split("*")
+            Operator.DIVISION -> value.split("/")
+            else -> value.split(" ")
+        }
+
+        return result
     }
 }
