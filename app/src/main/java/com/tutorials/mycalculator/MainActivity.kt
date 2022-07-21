@@ -109,6 +109,25 @@ class MainActivity : AppCompatActivity() {
                 isOperated = false
                 changeOperator((view as Button).text.toString())
             }
+            else if(lastNumeric && isOperatorAdded(it.toString())){
+                onEqual(view)
+                tvInput?.append((view as Button).text)
+                tvAllInput?.append((view as Button).text)
+                lastNumeric = false
+                lastDot = false
+                isOperated = false
+                changeOperator((view as Button).text.toString())
+            }
+            else if(!lastNumeric && !lastDot && isOperatorAdded(it.toString())){
+                var tempText : String = tvInput?.text.toString()
+                var tempAllText : String = tvAllInput?.text.toString()
+                tvInput?.text = tempText.substring(0, tempText.length - 1) + (view as Button).text.toString()
+                tvAllInput?.text = tempAllText.substring(0, tempAllText.length - 1) + (view as Button).text.toString()
+                lastNumeric = false
+                lastDot = false
+                isOperated = false
+                changeOperator((view as Button).text.toString())
+            }
         }
     }
 
