@@ -16,8 +16,10 @@ enum class Operator {
 class MainActivity : AppCompatActivity() {
 
     private var tvInput: TextView? = null
+    private var tvAllInput: TextView? = null
     var lastNumeric : Boolean = false
     var lastDot : Boolean = false
+    var isOperated : Boolean = false
     var currentOperator : Operator = Operator.DEFAULT
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,13 +27,27 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         tvInput = findViewById(R.id.tvInput)
+        tvAllInput = findViewById(R.id.tvAllInput)
         tvInput?.text = "0"
+        tvAllInput?.text = "0"
     }
 
     fun onDigit(view: View){
         val input : String = (view as Button).text.toString()
+        if(isOperated){
+            tvInput?.text = input
+            tvAllInput?.text = input
+            lastNumeric = input != "0"
+            lastDot = false
+            isOperated = false
+            currentOperator = Operator.DEFAULT
+
+            return
+        }
+
         if(lastNumeric || lastDot) {
             tvInput?.append(input)
+            tvAllInput?.append(input)
             lastNumeric = true
         }
         else {
@@ -39,9 +55,11 @@ class MainActivity : AppCompatActivity() {
             if(tvValues.size <= 1) {
                 if (currentOperator != Operator.DEFAULT && tvInput?.text.toString() != "0") {
                     tvInput?.append(input)
+                    tvAllInput?.append(input)
                     lastNumeric = true
                 } else if (input != "0") {
                     tvInput?.text = input
+                    tvAllInput?.text = input
                     lastNumeric = true
                 }
             }
@@ -49,11 +67,14 @@ class MainActivity : AppCompatActivity() {
                 if (tvValues[1] == "0"){
                     if (input != "0") {
                         var tempText : String = tvInput?.text.toString()
+                        var tempAllText : String = tvAllInput?.text.toString()
                         tvInput?.text = tempText.substring(0, tempText.length - 1) + input
+                        tvAllInput?.text = tempAllText.substring(0, tempAllText.length -1) + input
                         lastNumeric = true
                     }
                 } else{
                     tvInput?.append(input)
+                    tvAllInput?.append(input)
                     if (input != "0")
                         lastNumeric = true
                 }
@@ -63,13 +84,16 @@ class MainActivity : AppCompatActivity() {
 
     fun onClear(view: View){
         tvInput?.text = "0"
+        tvAllInput?.text = "0"
         lastNumeric = false
         lastDot = false
+        isOperated = false
     }
 
     fun onDecimalPoint(view: View){
         if((lastNumeric || tvInput?.text.toString().last() == '0') && !lastDot){
             tvInput?.append(".")
+            tvAllInput?.append(".")
             lastNumeric = false
             lastDot = true
         }
@@ -79,8 +103,10 @@ class MainActivity : AppCompatActivity() {
         tvInput?.text?.let{
             if(lastNumeric && !isOperatorAdded(it.toString())){
                 tvInput?.append((view as Button).text)
+                tvAllInput?.append((view as Button).text)
                 lastNumeric = false
                 lastDot = false
+                isOperated = false
                 changeOperator((view as Button).text.toString())
             }
         }
@@ -136,6 +162,8 @@ class MainActivity : AppCompatActivity() {
         var one = prefix + splitValue[0]
         var two = splitValue[1]
         var result = one.toDouble() + two.toDouble()
+        isOperated = true
+        currentOperator = Operator.DEFAULT
 
         return removeZeroAfterDot(result.toString())
     }
@@ -146,6 +174,8 @@ class MainActivity : AppCompatActivity() {
         var one = prefix + splitValue[0]
         var two = splitValue[1]
         var result = one.toDouble() - two.toDouble()
+        isOperated = true
+        currentOperator = Operator.DEFAULT
 
         return removeZeroAfterDot(result.toString())
     }
@@ -156,6 +186,8 @@ class MainActivity : AppCompatActivity() {
         var one = prefix + splitValue[0]
         var two = splitValue[1]
         var result = one.toDouble() * two.toDouble()
+        isOperated = true
+        currentOperator = Operator.DEFAULT
 
         return removeZeroAfterDot(result.toString())
     }
@@ -166,6 +198,8 @@ class MainActivity : AppCompatActivity() {
         var one = prefix + splitValue[0]
         var two = splitValue[1]
         var result = one.toDouble() / two.toDouble()
+        isOperated = true
+        currentOperator = Operator.DEFAULT
 
         return removeZeroAfterDot(result.toString())
     }
