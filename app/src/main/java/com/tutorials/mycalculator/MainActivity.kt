@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity() {
 
     fun onOperator(view: View){
         tvInput?.text?.let{
-            if(lastNumeric && !isOperatorAdded(it.toString())){
+            if((lastNumeric && !isOperatorAdded(it.toString())) || it.toString() == "0"){
                 tvInput?.append((view as Button).text)
                 tvAllInput?.append((view as Button).text)
                 lastNumeric = false
